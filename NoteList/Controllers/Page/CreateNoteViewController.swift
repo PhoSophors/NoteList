@@ -1,91 +1,112 @@
 import UIKit
 
-protocol CreateNoteDelegate: AnyObject {
-    func didCreateNoteWithTitle(_ title: String, descriptions: String, inFolder folder: Folder)
-}
-
 class CreateNoteViewController: UIViewController {
     
-    var selectedFolder: Folder?
-    weak var delegate: CreateNoteDelegate?
+    var selectedFolder: Folder? // The selected folder for creating the note
+    private let dataManager = DataManager.shared
     
-    private let dataManager = DataManager()
+    // UI elements
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Note Title:"
+        return label
+    }()
     
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Enter note title"
+        textField.placeholder = "Enter title"
         textField.borderStyle = .roundedRect
         return textField
     }()
     
-    private let descriptionTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Enter note description"
-        textField.borderStyle = .roundedRect
-        return textField
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Note Description:"
+        return label
+    }()
+    
+    private let descriptionTextView: UITextView = {
+        let textView = UITextView()
+        textView.text = "Enter description"
+        textView.layer.cornerRadius = 5
+        textView.layer.borderWidth = 1
+        textView.layer.borderColor = UIColor.lightGray.cgColor
+        return textView
     }()
     
     private let saveButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Save", for: .normal)
-        button.addTarget(self, action: #selector(saveNote), for: .touchUpInside)
+        button.backgroundColor = .systemBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 5
+        button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .white
+        title = "Create Note"
         
-        setupViews()
+        setupUI()
     }
     
-    private func setupViews() {
+    private func setupUI() {
+        view.addSubview(titleLabel)
         view.addSubview(titleTextField)
-        view.addSubview(descriptionTextField)
+        view.addSubview(descriptionLabel)
+        view.addSubview(descriptionTextView)
         view.addSubview(saveButton)
         
-        titleTextField.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(20)
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
         }
         
-        descriptionTextField.snp.makeConstraints { make in
+        titleTextField.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(titleTextField.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
+        }
+        
+        descriptionTextView.snp.makeConstraints { make in
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(10)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(120)
         }
         
         saveButton.snp.makeConstraints { make in
-            make.top.equalTo(descriptionTextField.snp.bottom).offset(20)
+            make.top.equalTo(descriptionTextView.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
+            make.width.equalTo(100)
+            make.height.equalTo(40)
         }
     }
     
-    @objc private func saveNote() {
-        guard let folder = selectedFolder else {
-            showErrorMessage("No folder selected")
+    @objc private func saveButtonTapped() {
+        guard let title = titleTextField.text, !title.isEmpty,
+              let description = descriptionTextView.text, !description.isEmpty,
+              let folder = selectedFolder else {
+            showErrorMessage("Title, description, or folder cannot be empty.")
             return
         }
         
-        guard let title = titleTextField.text, !title.isEmpty else {
-            showErrorMessage("Please enter a valid title")
-            return
-        }
+        // Save the note using DataManager
+        dataManager.saveNote(title: title, description: description, folder: folder)
         
-        guard let description = descriptionTextField.text, !description.isEmpty else {
-            showErrorMessage("Please enter a valid description")
-            return
-        }
-        
-        dataManager.saveNote(title: title, descriptions: description, folder: folder)
-        delegate?.didCreateNoteWithTitle(title, descriptions: description, inFolder: folder)
+        // Optionally, you can dismiss or navigate back after saving
         navigationController?.popViewController(animated: true)
     }
     
     private func showErrorMessage(_ message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alertController, animated: true, completion: nil)
     }
 }

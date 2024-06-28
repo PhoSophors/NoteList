@@ -8,7 +8,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        let tabBarController = TabBarController() // Create an instance of TabBarController
+        self.window = window
+
+        // Check login state
+        LoginHelper.checkLoginStatus { isLoggedIn, _ in
+            DispatchQueue.main.async {
+                if isLoggedIn {
+                    self.setupTabBarController()
+                } else {
+                    self.showLoginScreen()
+                }
+            }
+        }
+    }
+
+    func setupTabBarController() {
+        let tabBarController = TabBarController()
 
         // Replace with your NoteViewController setup
         let noteViewController = NoteViewController()
@@ -23,9 +38,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let navigationController = UINavigationController(rootViewController: tabBarController)
 
-        window.rootViewController = navigationController
-        self.window = window
-        window.makeKeyAndVisible()
+        self.window?.rootViewController = navigationController
+        self.window?.makeKeyAndVisible()
+    }
+
+    func showLoginScreen() {
+        let loginViewController = LoginViewController() // Replace with your login view controller
+        self.window?.rootViewController = loginViewController
+        self.window?.makeKeyAndVisible()
     }
 
     // Other UISceneDelegate methods...

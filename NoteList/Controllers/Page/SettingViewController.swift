@@ -20,7 +20,7 @@ class SettingViewController: UIViewController {
         return label
     }()
     
-    private let logoutButton: UIButton = {
+    private lazy var logoutButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Logout", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -44,6 +44,8 @@ class SettingViewController: UIViewController {
         // Check if user is logged in and update usernameLabel
         updateUsernameLabel()
     }
+
+    // MARK: - Private Functions
     
     // Function to setup UI elements and their constraints
     private func setupUI() {
@@ -76,8 +78,14 @@ class SettingViewController: UIViewController {
         let confirmAction = UIAlertAction(title: "Logout", style: .destructive) { _ in
             // Clear login state
             LoginHelper.clearLoginState()
+            
             // Dismiss current view controller
             self.dismiss(animated: true, completion: nil)
+            
+            // Present the login screen again
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.showLoginScreen()
+            }
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -87,7 +95,7 @@ class SettingViewController: UIViewController {
         
         present(alertController, animated: true, completion: nil)
     }
-    
+
     // Function to update usernameLabel with the current logged-in username
     private func updateUsernameLabel() {
         LoginHelper.checkLoginStatus { isLoggedIn, username in
@@ -99,3 +107,4 @@ class SettingViewController: UIViewController {
         }
     }
 }
+

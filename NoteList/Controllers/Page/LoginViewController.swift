@@ -3,8 +3,6 @@ import SnapKit
 
 class LoginViewController: UIViewController {
 
-    var username = String()
-
     // UI elements
     let noteIconImageView: UIImageView = {
         let imageView = UIImageView()

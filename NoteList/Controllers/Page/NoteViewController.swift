@@ -114,6 +114,7 @@ class NoteViewController: UIViewController {
         folderDetailViewController.folderName = folderName
         navigationController?.pushViewController(folderDetailViewController, animated: true)
     }
+
 }
 
 extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
