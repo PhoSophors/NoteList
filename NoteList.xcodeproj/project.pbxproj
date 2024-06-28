@@ -16,6 +16,7 @@
 		18363D822C2E91610088504C /* FolderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D812C2E91610088504C /* FolderCollectionViewCell.swift */; };
 		18363D852C2E92C80088504C /* FolderDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D842C2E92C80088504C /* FolderDetailViewController.swift */; };
 		18363D872C2E98300088504C /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D862C2E982F0088504C /* FolderViewController.swift */; };
+		18363D8A2C2EC54D0088504C /* NoteListDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 18363D882C2EC54D0088504C /* NoteListDataModel.xcdatamodeld */; };
 		18CAD38A2C2E751D00436183 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CAD3892C2E751D00436183 /* AppDelegate.swift */; };
 		18CAD38C2C2E751D00436183 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CAD38B2C2E751D00436183 /* SceneDelegate.swift */; };
 		18CAD3932C2E751E00436183 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18CAD3922C2E751E00436183 /* Assets.xcassets */; };
@@ -33,6 +34,7 @@
 		18363D812C2E91610088504C /* FolderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCollectionViewCell.swift; sourceTree = "<group>"; };
 		18363D842C2E92C80088504C /* FolderDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailViewController.swift; sourceTree = "<group>"; };
 		18363D862C2E982F0088504C /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
+		18363D892C2EC54D0088504C /* NoteListDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NoteListDataModel.xcdatamodel; sourceTree = "<group>"; };
 		18CAD3862C2E751D00436183 /* NoteList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18CAD3892C2E751D00436183 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		18CAD38B2C2E751D00436183 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 		18CAD39F2C2E762300436183 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				18363D882C2EC54D0088504C /* NoteListDataModel.xcdatamodeld */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				18363D7C2C2E7B170088504C /* NoteViewController.swift in Sources */,
 				18CAD38A2C2E751D00436183 /* AppDelegate.swift in Sources */,
 				18363D752C2E77400088504C /* DataManager.swift in Sources */,
+				18363D8A2C2EC54D0088504C /* NoteListDataModel.xcdatamodeld in Sources */,
 				18363D7E2C2E7B2A0088504C /* SettingViewController.swift in Sources */,
 				18363D852C2E92C80088504C /* FolderDetailViewController.swift in Sources */,
 				18363D802C2E848C0088504C /* Helpers.swift in Sources */,
@@ -491,6 +495,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		18363D882C2EC54D0088504C /* NoteListDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				18363D892C2EC54D0088504C /* NoteListDataModel.xcdatamodel */,
+			);
+			currentVersion = 18363D892C2EC54D0088504C /* NoteListDataModel.xcdatamodel */;
+			path = NoteListDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 18CAD37E2C2E751C00436183 /* Project object */;
 }

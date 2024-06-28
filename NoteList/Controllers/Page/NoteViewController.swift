@@ -1,9 +1,9 @@
 import UIKit
-import SnapKit
 
 class NoteViewController: UIViewController {
     
-    private var folders: [String] = ["Documents", "Files", "Photo"] // Example folder names
+    private var folders: [Folder] = []
+    private let dataManager = DataManager()
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -21,6 +21,12 @@ class NoteViewController: UIViewController {
         
         setupSearchBar()
         setupCollectionView()
+        fetchFoldersFromCoreData()
+        
+        // Add tap gesture recognizer to dismiss keyboard
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false // Allow collection view to receive tap events
+        view.addGestureRecognizer(tapGesture)
     }
     
     private func setupSearchBar() {
@@ -69,6 +75,11 @@ class NoteViewController: UIViewController {
         }
     }
     
+    private func fetchFoldersFromCoreData() {
+        folders = dataManager.fetchFolders()
+        collectionView.reloadData()
+    }
+    
     @objc private func addFolder() {
         let alertController = UIAlertController(title: "New Folder", message: "Enter folder name", preferredStyle: .alert)
         alertController.addTextField()
@@ -78,8 +89,8 @@ class NoteViewController: UIViewController {
                 self.showErrorMessage("Folder name can't be empty")
                 return
             }
-            self.folders.append(folderName)
-            self.collectionView.reloadData()
+            self.dataManager.saveFolder(name: folderName)
+            self.fetchFoldersFromCoreData()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -95,6 +106,13 @@ class NoteViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+    
+    private func openFolderDetail(at indexPath: IndexPath) {
+        guard let folderName = folders[indexPath.item].folderName else { return }
+        let folderDetailViewController = FolderDetailViewController()
+        folderDetailViewController.folderName = folderName
+        navigationController?.pushViewController(folderDetailViewController, animated: true)
+    }
 }
 
 extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -106,12 +124,16 @@ extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelega
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "folderCell", for: indexPath) as! FolderCollectionViewCell
         
         // Configure the cell with folder data
-        let folderName = folders[indexPath.item]
+        let folderName = folders[indexPath.item].folderName ?? ""
         cell.nameLabel.text = folderName
         
         // Add long press gesture recognizer
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         cell.addGestureRecognizer(longPressRecognizer)
+
+        // Add tap gesture recognizer
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        cell.addGestureRecognizer(tapRecognizer)
         
         return cell
     }
@@ -121,24 +143,39 @@ extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelega
         return CGSize(width: width, height: width * 1.2) // Adjust height as needed
     }
     
+    @objc private func handleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+        guard let cell = gestureRecognizer.view as? FolderCollectionViewCell else { return }
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        
+        // Temporarily update cell UI to show folder name
+        UIView.transition(with: cell.nameLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            cell.nameLabel.text = self.folders[indexPath.item].folderName ?? ""
+        }, completion: { _ in
+            // Delay to allow user to see folder name briefly
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.openFolderDetail(at: indexPath)
+            }
+        })
+    }
+    
     @objc private func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard gestureRecognizer.state == .began else { return }
         
         if let indexPath = collectionView.indexPathForItem(at: gestureRecognizer.location(in: collectionView)) {
-            let folderName = folders[indexPath.item]
-            showFolderActionSheet(for: folderName, at: indexPath)
+            let folder = folders[indexPath.item]
+            showFolderActionSheet(for: folder, at: indexPath)
         }
     }
     
-    private func showFolderActionSheet(for folderName: String, at indexPath: IndexPath) {
-        let alert = UIAlertController(title: folderName, message: nil, preferredStyle: .actionSheet)
+    private func showFolderActionSheet(for folder: Folder, at indexPath: IndexPath) {
+        let alert = UIAlertController(title: folder.folderName ?? "", message: nil, preferredStyle: .actionSheet)
         
         let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
-            self.editFolder(at: indexPath)
+            self.editFolder(folder)
         }
         
         let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            self.deleteFolder(at: indexPath)
+            self.deleteFolder(folder)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -150,10 +187,10 @@ extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelega
         present(alert, animated: true, completion: nil)
     }
     
-    private func editFolder(at indexPath: IndexPath) {
+    private func editFolder(_ folder: Folder) {
         let alertController = UIAlertController(title: "Edit Folder Name", message: nil, preferredStyle: .alert)
         alertController.addTextField { textField in
-            textField.text = self.folders[indexPath.item]
+            textField.text = folder.folderName
         }
         
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
@@ -161,8 +198,8 @@ extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelega
                 self.showErrorMessage("Folder name can't be empty")
                 return
             }
-            self.folders[indexPath.item] = newFolderName
-            self.collectionView.reloadData()
+            self.dataManager.updateFolder(folder: folder, newName: newFolderName)
+            self.fetchFoldersFromCoreData()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -173,8 +210,12 @@ extension NoteViewController: UICollectionViewDataSource, UICollectionViewDelega
         present(alertController, animated: true, completion: nil)
     }
     
-    private func deleteFolder(at indexPath: IndexPath) {
-        self.folders.remove(at: indexPath.item)
-        self.collectionView.reloadData()
+    private func deleteFolder(_ folder: Folder) {
+        self.dataManager.deleteFolder(folder: folder)
+        self.fetchFoldersFromCoreData()
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

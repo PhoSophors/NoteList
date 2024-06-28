@@ -1,10 +1,3 @@
-/**
- * Name: Pho Sohpors
- * Date: 21 May 2024
- *
- * Folder Collection View Cell
- */
-
 import UIKit
 import SnapKit
 
@@ -43,7 +36,7 @@ class FolderCollectionViewCell: UICollectionViewCell {
             make.bottom.equalToSuperview().offset(-10)
         }
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
