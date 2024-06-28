@@ -29,6 +29,7 @@ class NoteViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
     }
     
+    // MARK: SEARCH
     private func setupSearchBar() {
         let searchBar = UISearchBar()
         searchBar.placeholder = "Search"
@@ -37,7 +38,7 @@ class NoteViewController: UIViewController {
         let plusButton = UIButton(type: .system)
         plusButton.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
         plusButton.tintColor = .systemBlue
-        plusButton.addTarget(self, action: #selector(addFolder), for: .touchUpInside)
+        plusButton.addTarget(self, action: #selector(createFolder), for: .touchUpInside)
         
         let searchContainer = UIView()
         view.addSubview(searchContainer)
@@ -80,7 +81,7 @@ class NoteViewController: UIViewController {
         collectionView.reloadData()
     }
     
-    @objc private func addFolder() {
+    @objc private func createFolder() {
         let alertController = UIAlertController(title: "New Folder", message: "Enter folder name", preferredStyle: .alert)
         alertController.addTextField()
         
