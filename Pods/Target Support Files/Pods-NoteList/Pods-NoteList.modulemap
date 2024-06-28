@@ -1,0 +1,6 @@
+framework module Pods_NoteList {
+  umbrella header "Pods-NoteList-umbrella.h"
+
+  export *
+  module * { export * }
+}
