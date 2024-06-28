@@ -13,11 +13,13 @@
 		18363D7C2C2E7B170088504C /* NoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D7B2C2E7B170088504C /* NoteViewController.swift */; };
 		18363D7E2C2E7B2A0088504C /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D7D2C2E7B2A0088504C /* SettingViewController.swift */; };
 		18363D802C2E848C0088504C /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D7F2C2E848C0088504C /* Helpers.swift */; };
+		18363D822C2E91610088504C /* FolderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D812C2E91610088504C /* FolderCollectionViewCell.swift */; };
+		18363D852C2E92C80088504C /* FolderDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D842C2E92C80088504C /* FolderDetailViewController.swift */; };
+		18363D872C2E98300088504C /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18363D862C2E982F0088504C /* FolderViewController.swift */; };
 		18CAD38A2C2E751D00436183 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CAD3892C2E751D00436183 /* AppDelegate.swift */; };
 		18CAD38C2C2E751D00436183 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CAD38B2C2E751D00436183 /* SceneDelegate.swift */; };
 		18CAD3932C2E751E00436183 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18CAD3922C2E751E00436183 /* Assets.xcassets */; };
 		18CAD3962C2E751E00436183 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 18CAD3952C2E751E00436183 /* Base */; };
-		18CAD39E2C2E75FC00436183 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CAD39D2C2E75FC00436183 /* MainViewController.swift */; };
 		50D5506F3DD6B141DC98E7E7 /* Pods_NoteList.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59EAAC55874CE33E9A211EF0 /* Pods_NoteList.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,13 +30,15 @@
 		18363D7B2C2E7B170088504C /* NoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewController.swift; sourceTree = "<group>"; };
 		18363D7D2C2E7B2A0088504C /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		18363D7F2C2E848C0088504C /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		18363D812C2E91610088504C /* FolderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCollectionViewCell.swift; sourceTree = "<group>"; };
+		18363D842C2E92C80088504C /* FolderDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailViewController.swift; sourceTree = "<group>"; };
+		18363D862C2E982F0088504C /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
 		18CAD3862C2E751D00436183 /* NoteList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18CAD3892C2E751D00436183 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		18CAD38B2C2E751D00436183 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		18CAD3922C2E751E00436183 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		18CAD3952C2E751E00436183 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		18CAD3972C2E751E00436183 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		18CAD39D2C2E75FC00436183 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		59EAAC55874CE33E9A211EF0 /* Pods_NoteList.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteList.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F038AEE4E10C5AB86C94250 /* Pods-NoteList.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteList.release.xcconfig"; path = "Target Support Files/Pods-NoteList/Pods-NoteList.release.xcconfig"; sourceTree = "<group>"; };
 		72BACEAEEE59054996D06318 /* Pods-NoteList.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteList.debug.xcconfig"; path = "Target Support Files/Pods-NoteList/Pods-NoteList.debug.xcconfig"; sourceTree = "<group>"; };
@@ -55,11 +59,9 @@
 		18363D712C2E770A0088504C /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				18CAD39D2C2E75FC00436183 /* MainViewController.swift */,
-				18363D772C2E778B0088504C /* LoginViewController.swift */,
+				18363D832C2E920C0088504C /* Page */,
 				18363D792C2E79930088504C /* TabBarController.swift */,
-				18363D7B2C2E7B170088504C /* NoteViewController.swift */,
-				18363D7D2C2E7B2A0088504C /* SettingViewController.swift */,
+				18363D862C2E982F0088504C /* FolderViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -67,6 +69,7 @@
 		18363D722C2E772C0088504C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				18363D812C2E91610088504C /* FolderCollectionViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -78,6 +81,17 @@
 				18363D7F2C2E848C0088504C /* Helpers.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		18363D832C2E920C0088504C /* Page */ = {
+			isa = PBXGroup;
+			children = (
+				18363D7D2C2E7B2A0088504C /* SettingViewController.swift */,
+				18363D772C2E778B0088504C /* LoginViewController.swift */,
+				18363D7B2C2E7B170088504C /* NoteViewController.swift */,
+				18363D842C2E92C80088504C /* FolderDetailViewController.swift */,
+			);
+			path = Page;
 			sourceTree = "<group>";
 		};
 		18CAD37D2C2E751C00436183 = {
@@ -256,11 +270,13 @@
 				18CAD38A2C2E751D00436183 /* AppDelegate.swift in Sources */,
 				18363D752C2E77400088504C /* DataManager.swift in Sources */,
 				18363D7E2C2E7B2A0088504C /* SettingViewController.swift in Sources */,
+				18363D852C2E92C80088504C /* FolderDetailViewController.swift in Sources */,
 				18363D802C2E848C0088504C /* Helpers.swift in Sources */,
 				18CAD38C2C2E751D00436183 /* SceneDelegate.swift in Sources */,
 				18363D7A2C2E79930088504C /* TabBarController.swift in Sources */,
+				18363D872C2E98300088504C /* FolderViewController.swift in Sources */,
 				18363D782C2E778B0088504C /* LoginViewController.swift in Sources */,
-				18CAD39E2C2E75FC00436183 /* MainViewController.swift in Sources */,
+				18363D822C2E91610088504C /* FolderCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

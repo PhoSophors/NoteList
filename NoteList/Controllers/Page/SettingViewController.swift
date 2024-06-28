@@ -33,7 +33,7 @@ class SettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Settings"
-        view.backgroundColor = .white
+        view.backgroundColor = .systemGray6
         
         view.addSubview(personIconImageView)
         view.addSubview(usernameLabel)
