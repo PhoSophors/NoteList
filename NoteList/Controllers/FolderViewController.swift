@@ -1,5 +1,5 @@
 //
-//  NoteViewController.swift
+//  FolderViewController.swift
 //  NoteList
 //
 //  Created by Apple on 28/6/24.
@@ -7,11 +7,10 @@
 
 import UIKit
 
-class NoteViewController: UIViewController {
+class FolderViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
 
         // Do any additional setup after loading the view.
     }
