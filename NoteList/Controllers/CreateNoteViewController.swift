@@ -1,11 +1,11 @@
 import UIKit
+import SnapKit
 
 class CreateNoteViewController: UIViewController {
     
-    var selectedFolder: Folder? // The selected folder for creating the note
+    var selectedFolder: Folder?
     private let dataManager = DataManager.shared
     
-    // UI elements
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Note Title:"
@@ -97,11 +97,13 @@ class CreateNoteViewController: UIViewController {
             return
         }
         
-        // Save the note using DataManager
-        dataManager.saveNote(title: title, description: description, folder: folder)
-        
-        // Optionally, you can dismiss or navigate back after saving
-        navigationController?.popViewController(animated: true)
+        // Ensure the selectedFolder is fetched using the same context
+        if let folderInCurrentContext = dataManager.fetchFolderByName(name: folder.folderName ?? "") {
+            dataManager.saveNote(title: title, description: description, folder: folderInCurrentContext)
+            navigationController?.popViewController(animated: true)
+        } else {
+            showErrorMessage("Failed to find the folder.")
+        }
     }
     
     private func showErrorMessage(_ message: String) {
