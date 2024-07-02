@@ -1,0 +1,199 @@
+import UIKit
+import SnapKit
+import CoreData
+
+class FolderDetailViewController: UIViewController {
+
+    var folderName: String?
+    private let dataManager = DataManager.shared
+    private var notes: [Note] = []
+    private var filteredNotes: [Note] = [] // Array to hold filtered notes
+    private var isSearching: Bool = false // Flag to track if searching is active
+
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .white
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(NoteCollectionViewCell.self, forCellWithReuseIdentifier: NoteCollectionViewCell.identifier)
+        return collectionView
+    }()
+
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "Search by note title"
+        searchBar.searchBarStyle = .minimal
+        searchBar.delegate = self // Assigning delegate for search functionality
+        return searchBar
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        setupSearchBar()
+        setupCollectionView()
+        fetchNotes()
+    }
+
+    // MARK: - Search
+    private func setupSearchBar() {
+        let searchContainer = UIView()
+        view.addSubview(searchContainer)
+
+        searchContainer.addSubview(searchBar)
+
+        let plusButton = UIButton(type: .system)
+        plusButton.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+        plusButton.tintColor = .systemBlue
+        plusButton.addTarget(self, action: #selector(createNote), for: .touchUpInside)
+        searchContainer.addSubview(plusButton)
+
+        searchContainer.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(50)
+        }
+
+        searchBar.snp.makeConstraints { make in
+            make.top.bottom.leading.equalToSuperview()
+            make.trailing.equalTo(plusButton.snp.leading)
+        }
+
+        plusButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().inset(10)
+            make.width.height.equalTo(30)
+        }
+    }
+    
+    private func setupCollectionView() {
+        view.addSubview(collectionView)
+
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(searchBar.snp.bottom).offset(10)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+
+    // MARK: - Data Handling
+
+    private func fetchNotes() {
+        guard let folderName = folderName else {
+            return
+        }
+
+        // Fetch the selected folder from CoreData using folderName
+        guard let folder = dataManager.fetchFolderByName(name: folderName) else {
+            return
+        }
+
+        // Fetch notes for the selected folder
+        notes = dataManager.fetchNotes(in: folder)
+        collectionView.reloadData()
+    }
+
+    // MARK: - Actions
+
+    @objc private func createNote() {
+        guard let folderName = folderName else {
+            showErrorMessage("Folder name is missing.")
+            return
+        }
+
+        // Fetch the selected folder from CoreData using folderName
+        guard let folder = dataManager.fetchFolderByName(name: folderName) else {
+            showErrorMessage("Failed to find folder in CoreData.")
+            return
+        }
+
+        let createNoteVC = CreateNoteViewController()
+        createNoteVC.selectedFolder = folder // Pass the selected folder
+        
+        navigationController?.pushViewController(createNoteVC, animated: true)
+    }
+
+    private func showErrorMessage(_ message: String) {
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alertController, animated: true, completion: nil)
+    }
+}
+
+extension FolderDetailViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if isSearching {
+            return filteredNotes.count
+        } else {
+            return notes.count
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NoteCollectionViewCell.identifier, for: indexPath) as? NoteCollectionViewCell else {
+            fatalError("Failed to dequeue NoteCollectionViewCell")
+        }
+
+        let note: Note
+        if isSearching {
+            note = filteredNotes[indexPath.item]
+        } else {
+            note = notes[indexPath.item]
+        }
+
+        cell.configure(with: note)
+
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        // Adjust the cell size as per your requirements
+        return CGSize(width: collectionView.bounds.width - 20, height: 100)
+    }
+}
+
+extension FolderDetailViewController: UISearchBarDelegate {
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterContentForSearchText(searchText)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        filterContentForSearchText("")
+        searchBar.resignFirstResponder()
+    }
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func filterContentForSearchText(_ searchText: String) {
+        if searchText.isEmpty {
+            isSearching = false
+            collectionView.reloadData()
+        } else {
+            isSearching = true
+            filteredNotes = notes.filter { note in
+                if let title = note.noteTitle {
+                    return title.range(of: searchText, options: .caseInsensitive) != nil
+                }
+                return false
+            }
+            collectionView.reloadData()
+        }
+    }
+
+    func didCreateNote() {
+        // When a new note is created, refresh the notes
+        fetchNotes()
+    }
+  
+}
+

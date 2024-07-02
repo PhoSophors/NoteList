@@ -6,6 +6,7 @@ class FolderViewController: UIViewController {
     private var folders: [Folder] = []
     private var filteredFolders: [Folder] = [] // Array to hold filtered folders
     private let dataManager = DataManager()
+    private let refreshControl = UIRefreshControl()
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -14,6 +15,7 @@ class FolderViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(FolderCollectionViewCell.self, forCellWithReuseIdentifier: "folderCell")
+        collectionView.refreshControl = refreshControl
         return collectionView
     }()
 
@@ -32,6 +34,7 @@ class FolderViewController: UIViewController {
         setupSearchBar()
         setupCollectionView()
         fetchFoldersFromCoreData()
+        setupRefreshControl()
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGesture.cancelsTouchesInView = false
@@ -69,7 +72,6 @@ class FolderViewController: UIViewController {
         }
     }
 
-
     private func setupCollectionView() {
         view.addSubview(collectionView)
 
@@ -79,6 +81,15 @@ class FolderViewController: UIViewController {
             make.trailing.equalToSuperview().offset(-10)
             make.bottom.equalToSuperview().offset(-10)
         }
+    }
+
+    private func setupRefreshControl() {
+        refreshControl.addTarget(self, action: #selector(refreshFolders), for: .valueChanged)
+    }
+
+    @objc private func refreshFolders() {
+        fetchFoldersFromCoreData()
+        refreshControl.endRefreshing()
     }
 
     private func fetchFoldersFromCoreData() {
@@ -96,6 +107,10 @@ class FolderViewController: UIViewController {
                 self.showErrorMessage("Folder name can't be empty")
                 return
             }
+            if self.isFolderNameExists(folderName) {
+                self.showErrorMessage("Folder name already exists")
+                return
+            }
             self.dataManager.saveFolder(name: folderName)
             self.fetchFoldersFromCoreData()
         }
@@ -106,6 +121,10 @@ class FolderViewController: UIViewController {
         alertController.addAction(cancelAction)
 
         present(alertController, animated: true, completion: nil)
+    }
+
+    private func isFolderNameExists(_ folderName: String) -> Bool {
+        return folders.contains { $0.folderName?.lowercased() == folderName.lowercased() }
     }
 
     private func showErrorMessage(_ message: String) {
@@ -121,13 +140,12 @@ class FolderViewController: UIViewController {
         } else {
             selectedFolder = folders[indexPath.item]
         }
-        
+
         guard let folderName = selectedFolder.folderName else { return }
         let folderDetailViewController = FolderDetailViewController()
         folderDetailViewController.folderName = folderName
         navigationController?.pushViewController(folderDetailViewController, animated: true)
     }
-
 }
 
 extension FolderViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -142,7 +160,7 @@ extension FolderViewController: UICollectionViewDataSource, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "folderCell", for: indexPath) as! FolderCollectionViewCell
-        
+
         let folder: Folder
         if isFiltering() {
             folder = filteredFolders[indexPath.item]
@@ -152,6 +170,10 @@ extension FolderViewController: UICollectionViewDataSource, UICollectionViewDele
 
         let folderName = folder.folderName ?? ""
         cell.nameLabel.text = folderName
+
+        // Fetch notes for the folder to get the count
+        let noteCount = dataManager.fetchNotes(for: folder).count
+        cell.noteCountLabel.text = "Notes: \(noteCount)"
 
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         cell.addGestureRecognizer(longPressRecognizer)
@@ -254,25 +276,25 @@ extension FolderViewController: UICollectionViewDataSource, UICollectionViewDele
 }
 
 extension FolderViewController: UISearchBarDelegate {
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filterContentForSearchText(searchText)
     }
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         filterContentForSearchText("")
         searchBar.resignFirstResponder()
     }
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
-    
+
     func isFiltering() -> Bool {
         return !searchBar.text!.isEmpty
     }
-    
+
     func filterContentForSearchText(_ searchText: String) {
         filteredFolders = folders.filter { (folder: Folder) -> Bool in
             return folder.folderName?.lowercased().contains(searchText.lowercased()) ?? false

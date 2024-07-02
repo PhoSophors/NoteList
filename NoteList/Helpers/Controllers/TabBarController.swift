@@ -11,20 +11,22 @@ class TabBarController: UITabBarController {
     func setupTabBar() {
         // Set background color of the tab bar
         tabBar.barTintColor = .darkGray
-        tabBar.backgroundColor = .white
         tabBar.tintColor = .systemBlue
+        tabBar.backgroundColor = .white
 
-        // Create NoteViewController and customize its tab bar item with a system icon
-        let noteVC = NoteViewController()
+        // Create NoteViewController (embedded in a navigation controller)
+        let noteVC = FolderViewController()
         noteVC.title = "Note"
         noteVC.tabBarItem = UITabBarItem(title: "Note", image: UIImage(systemName: "note.text"), tag: 0)
+        let noteNavVC = UINavigationController(rootViewController: noteVC)
 
-        // Create SettingsViewController and customize its tab bar item with a system icon
+        // Create SettingsViewController (embedded in a navigation controller)
         let settingsVC = SettingViewController()
         settingsVC.title = "Settings"
         settingsVC.tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gearshape"), tag: 1)
+        let settingsNavVC = UINavigationController(rootViewController: settingsVC)
 
         // Assign view controllers to the tab bar controller
-        viewControllers = [noteVC, settingsVC]
+        viewControllers = [noteNavVC, settingsNavVC]
     }
 }
